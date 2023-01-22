@@ -1,6 +1,14 @@
 from urllib.parse import urlparse
 import os
+from random import randint
 import requests
+
+
+def download_random_image():
+    response = requests.get(url="https://xkcd.com/info.0.json")
+    comics_count = response.json()["num"]
+    random_comics_num = randint(1, comics_count)
+    return download_image(resource_url=f"https://xkcd.com/{random_comics_num}/info.0.json")
 
 
 def get_image_type(image_url):
@@ -17,13 +25,17 @@ def download_image(resource_url, image_name=None, image_directory="./images", re
     if(not image_name):
         image_name = resource_response.json()["safe_title"]
     image_type = get_image_type(resource_response.json()['img'])
+    image_full_name = f"{image_name}{image_type}"
+    file = f"{image_directory}/{image_full_name}"
     os.makedirs(image_directory, exist_ok=True)
-    with open(f"{image_directory}/{image_name}{image_type}", 'wb') as fh:
+    with open(file, 'wb') as fh:
         fh.write(response.content)
+    message = resource_response.json()['alt']
+    return (message, file)
 
 
 def main():
-    download_image(resource_url="https://xkcd.com/info.0.json")
+    download_random_image()
 
 
 if __name__ == '__main__':
