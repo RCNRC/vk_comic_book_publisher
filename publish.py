@@ -7,6 +7,14 @@ import os
 BASE_URL = "https://api.vk.com/method/"
 
 
+def test(response):
+    try:
+        if "error" in response.json:
+            raise requests.exceptions.HTTPError
+    except requests.exceptions.HTTPError:
+        response
+
+
 def post_vk_wall(base_params, user_id, post_id, message, vk_group_id):
     method = "wall.post"
     params = base_params
@@ -52,7 +60,10 @@ def main():
         "access_token": f"{vk_app_api_access_token}",
         "v": "5.131",
     }
-    response = get_vk_wall(base_params=base_params)
+    try:
+        response = get_vk_wall(base_params=base_params)
+    except requests.exceptions.HTTPError as e:
+        print(e)
     comics_url = get_random_comics_resource_url()
     message, file_name = download_image(resource_url=comics_url)
     try:
