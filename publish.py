@@ -7,12 +7,13 @@ import os
 BASE_URL = "https://api.vk.com/method/"
 
 
-def test(response):
+def try_response(response, error_massage):
     try:
-        if "error" in response.json:
+        if "error" in response.json():
             raise requests.exceptions.HTTPError
     except requests.exceptions.HTTPError:
-        response
+        print(error_massage)
+        raise requests.exceptions.HTTPError
 
 
 def post_vk_wall(base_params, user_id, post_id, message, vk_group_id):
@@ -60,22 +61,23 @@ def main():
         "access_token": f"{vk_app_api_access_token}",
         "v": "5.131",
     }
-    try:
-        response = get_vk_wall(base_params=base_params)
-    except requests.exceptions.HTTPError as e:
-        print(e)
+    response = get_vk_wall(base_params=base_params)
+    try_response(response=response, error_massage="get_vk_wall response raised exception.")
     comics_url = get_random_comics_resource_url()
     message, file_name = download_image(resource_url=comics_url)
     try:
         post_image_url=response.json()["response"]["upload_url"]
         response = post_vk_image(post_image_url=post_image_url, file_name=file_name)
+        try_response(response=response, error_massage="post_vk_image response raised exception.")
         response_server = response.json()["server"]
         response_photo = response.json()["photo"]
         response_hash = response.json()["hash"]
         response = safe_vk_wall(base_params=base_params, server=response_server, photo=response_photo, hash=response_hash)
+        try_response(response=response, error_massage="safe_vk_wall response raised exception.")
         user_id = response.json()["response"][0]["owner_id"]
         post_id = response.json()["response"][0]["id"]
         response = post_vk_wall(base_params=base_params, user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
+        try_response(response=response, error_massage="post_vk_wall response raised exception.")
     finally:
         os.remove(file_name)
 
