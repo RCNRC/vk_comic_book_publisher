@@ -28,8 +28,8 @@ def download_image(resource_url, image_name=None, resource_params=None, image_pa
     image_full_name = f"{image_name}{image_type}"
     file_name = f"{image_full_name}"
     
-    with open(file_name, 'wb') as fh:
-        fh.write(response.content)
+    with open(file_name, 'wb') as fd:
+        fd.write(response.content)
     message = resource_response.json()['alt']
     return (message, file_name)
 
