@@ -33,7 +33,7 @@ def post_vk_image(post_image_url, file_name):
     with open(f"{file_name}", 'rb') as fd:
         files = {'photo': fd}
         response = requests.post(url=f"{post_image_url}", files=files)
-        response.raise_for_status()
+    response.raise_for_status()
     return response.json()
 
 
