@@ -38,8 +38,8 @@ def vk_safe_wall(server, photo, hash):
     return response.json()
 
 
-def vk_post_image(post_image_url, file):
-    with open(f"{file}", 'rb') as fh:
+def vk_post_image(post_image_url, file_name):
+    with open(f"{file_name}", 'rb') as fh:
         files = {'photo': fh}
         response = requests.post(url=f"{post_image_url}", files=files)
         response.raise_for_status()
@@ -57,9 +57,9 @@ def vk_get_wall():
 def main():
     vk_group_id = dotenv_values(".env")["VK_GROUP_ID"]
     json_response = vk_get_wall()
-    (message, file) = download_random_image()  # скачивать рандомную
+    (message, file_name) = download_random_image()  # скачивать рандомную
     post_image_url=json_response["response"]["upload_url"]
-    json_response = vk_post_image(post_image_url=post_image_url, file=file)
+    json_response = vk_post_image(post_image_url=post_image_url, file=file_name)
     response_server = json_response["server"]
     response_photo = json_response["photo"]
     response_hash = json_response["hash"]
@@ -67,7 +67,7 @@ def main():
     user_id = json_response["response"][0]["owner_id"]
     post_id = json_response["response"][0]["id"]
     json_response = vk_post_wall(user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
-    os.remove(file)
+    os.remove(file_name)
 
 
 if __name__ == '__main__':
