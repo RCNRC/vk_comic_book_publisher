@@ -17,7 +17,7 @@ def get_image_type(image_url):
     return ext
 
 
-def download_image(resource_url, image_name=None, image_directory="./images", resource_params=None, image_params=None):
+def download_image(resource_url, image_name=None, resource_params=None, image_params=None):
     resource_response = requests.get(url=resource_url, params=resource_params)
     resource_response.raise_for_status()
     response = requests.get(url=resource_response.json()["img"], params=image_params)
@@ -26,8 +26,8 @@ def download_image(resource_url, image_name=None, image_directory="./images", re
         image_name = resource_response.json()["safe_title"]
     image_type = get_image_type(resource_response.json()['img'])
     image_full_name = f"{image_name}{image_type}"
-    file = f"{image_directory}/{image_full_name}"
-    os.makedirs(image_directory, exist_ok=True)
+    file = f"{image_full_name}"
+    
     with open(file, 'wb') as fh:
         fh.write(response.content)
     message = resource_response.json()['alt']

@@ -1,7 +1,7 @@
 from comics_download import download_random_image
 from dotenv import dotenv_values
 import requests
-from os import remove
+import os
 
 
 BASE_URL = "https://api.vk.com/method/"
@@ -67,6 +67,7 @@ def main():
     user_id = json_response["response"][0]["owner_id"]
     post_id = json_response["response"][0]["id"]
     json_response = vk_post_wall(user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
+    os.remove(file)
 
 
 if __name__ == '__main__':
