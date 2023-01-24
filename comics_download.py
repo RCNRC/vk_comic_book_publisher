@@ -13,7 +13,7 @@ def download_random_image():
 
 def get_image_type(image_url):
     parsed_url = urlparse(image_url)
-    (_, ext) = os.path.splitext(parsed_url.path)
+    _, ext = os.path.splitext(parsed_url.path)
     return ext
 
 
@@ -22,7 +22,7 @@ def download_image(resource_url, image_name=None, resource_params=None, image_pa
     resource_response.raise_for_status()
     response = requests.get(url=resource_response.json()["img"], params=image_params)
     response.raise_for_status()
-    if(not image_name):
+    if not image_name:
         image_name = resource_response.json()["safe_title"]
     image_type = get_image_type(resource_response.json()['img'])
     image_full_name = f"{image_name}{image_type}"
@@ -31,7 +31,7 @@ def download_image(resource_url, image_name=None, resource_params=None, image_pa
     with open(file_name, 'wb') as fd:
         fd.write(response.content)
     message = resource_response.json()['alt']
-    return (message, file_name)
+    return message, file_name
 
 
 def main():

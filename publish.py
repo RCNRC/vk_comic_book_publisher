@@ -57,7 +57,7 @@ def vk_get_wall():
 def main():
     vk_group_id = dotenv_values(".env")["VK_GROUP_ID"]
     json_response = vk_get_wall()
-    (message, file_name) = download_random_image()  # скачивать рандомную
+    message, file_name = download_random_image()  # скачивать рандомную
     post_image_url=json_response["response"]["upload_url"]
     json_response = vk_post_image(post_image_url=post_image_url, file_name=file_name)
     response_server = json_response["server"]
