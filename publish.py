@@ -15,7 +15,7 @@ def post_vk_wall(base_params, user_id, post_id, message, vk_group_id):
     params["owner_id"] = f"-{vk_group_id}"
     response = requests.post(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    return response.json()
+    return response
 
 
 def safe_vk_wall(base_params, server, photo, hash):
@@ -26,7 +26,7 @@ def safe_vk_wall(base_params, server, photo, hash):
     params["hash"] = hash
     response = requests.post(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    return response.json()
+    return response
 
 
 def post_vk_image(post_image_url, file_name):
@@ -34,7 +34,7 @@ def post_vk_image(post_image_url, file_name):
         files = {'photo': fd}
         response = requests.post(url=f"{post_image_url}", files=files)
     response.raise_for_status()
-    return response.json()
+    return response
 
 
 def get_vk_wall(base_params):
@@ -42,7 +42,7 @@ def get_vk_wall(base_params):
     params = base_params
     response = requests.get(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    return response.json()
+    return response
 
 
 def main():
@@ -52,19 +52,19 @@ def main():
         "access_token": f"{vk_app_api_access_token}",
         "v": "5.131",
     }
-    json_response = get_vk_wall(base_params=base_params)
+    response = get_vk_wall(base_params=base_params)
     comics_url = get_random_comics_resource_url()
     message, file_name = download_image(resource_url=comics_url)
     try:
-        post_image_url=json_response["response"]["upload_url"]
-        json_response = post_vk_image(post_image_url=post_image_url, file_name=file_name)
-        response_server = json_response["server"]
-        response_photo = json_response["photo"]
-        response_hash = json_response["hash"]
-        json_response = safe_vk_wall(base_params=base_params, server=response_server, photo=response_photo, hash=response_hash)
-        user_id = json_response["response"][0]["owner_id"]
-        post_id = json_response["response"][0]["id"]
-        json_response = post_vk_wall(base_params=base_params, user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
+        post_image_url=response.json()["response"]["upload_url"]
+        response = post_vk_image(post_image_url=post_image_url, file_name=file_name)
+        response_server = response.json()["server"]
+        response_photo = response.json()["photo"]
+        response_hash = response.json()["hash"]
+        response = safe_vk_wall(base_params=base_params, server=response_server, photo=response_photo, hash=response_hash)
+        user_id = response.json()["response"][0]["owner_id"]
+        post_id = response.json()["response"][0]["id"]
+        response = post_vk_wall(base_params=base_params, user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
     finally:
         os.remove(file_name)
 
