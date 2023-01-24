@@ -35,4 +35,4 @@ py -m pip download --destination-directory DIR -r requirements.txt
 
 ## comics_download.py
 
-При запуске скачивает в папку `images` случайный комикс. Ничего не выводит в терминал.
+При запуске скачивает в корневую папку случайный комикс. Ничего не выводит в терминал.
