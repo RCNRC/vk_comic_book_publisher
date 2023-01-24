@@ -1,4 +1,4 @@
-from comics_download import download_random_image
+from comics_download import get_random_comics_url, download_image
 from dotenv import dotenv_values
 import requests
 import os
@@ -57,7 +57,8 @@ def vk_get_wall():
 def main():
     vk_group_id = dotenv_values(".env")["VK_GROUP_ID"]
     json_response = vk_get_wall()
-    message, file_name = download_random_image()  # скачивать рандомную
+    comics_url = get_random_comics_url()
+    message, file_name = download_image(resource_url=comics_url)
     post_image_url=json_response["response"]["upload_url"]
     json_response = vk_post_image(post_image_url=post_image_url, file_name=file_name)
     response_server = json_response["server"]

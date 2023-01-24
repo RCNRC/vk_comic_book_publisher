@@ -4,11 +4,12 @@ from random import randint
 import requests
 
 
-def download_random_image():
+def get_random_comics_url():
     response = requests.get(url="https://xkcd.com/info.0.json")
     comics_count = response.json()["num"]
     random_comics_num = randint(1, comics_count)
-    return download_image(resource_url=f"https://xkcd.com/{random_comics_num}/info.0.json")
+    comics_url=f"https://xkcd.com/{random_comics_num}/info.0.json"
+    return comics_url
 
 
 def get_image_type(image_url):
@@ -35,7 +36,8 @@ def download_image(resource_url, image_name=None, resource_params=None, image_pa
 
 
 def main():
-    download_random_image()
+    comics_url = get_random_comics_url()
+    download_image(resource_url=comics_url)
 
 
 if __name__ == '__main__':
