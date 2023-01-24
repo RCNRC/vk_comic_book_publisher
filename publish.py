@@ -55,16 +55,18 @@ def main():
     json_response = get_vk_wall(base_params=base_params)
     comics_url = get_random_comics_resource_url()
     message, file_name = download_image(resource_url=comics_url)
-    post_image_url=json_response["response"]["upload_url"]
-    json_response = post_vk_image(post_image_url=post_image_url, file_name=file_name)
-    response_server = json_response["server"]
-    response_photo = json_response["photo"]
-    response_hash = json_response["hash"]
-    json_response = safe_vk_wall(base_params=base_params, server=response_server, photo=response_photo, hash=response_hash)
-    user_id = json_response["response"][0]["owner_id"]
-    post_id = json_response["response"][0]["id"]
-    json_response = post_vk_wall(base_params=base_params, user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
-    os.remove(file_name)
+    try:
+        post_image_url=json_response["response"]["upload_url"]
+        json_response = post_vk_image(post_image_url=post_image_url, file_name=file_name)
+        response_server = json_response["server"]
+        response_photo = json_response["photo"]
+        response_hash = json_response["hash"]
+        json_response = safe_vk_wall(base_params=base_params, server=response_server, photo=response_photo, hash=response_hash)
+        user_id = json_response["response"][0]["owner_id"]
+        post_id = json_response["response"][0]["id"]
+        json_response = post_vk_wall(base_params=base_params, user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
+    finally:
+        os.remove(file_name)
 
 
 if __name__ == '__main__':
