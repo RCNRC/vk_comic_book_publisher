@@ -20,26 +20,33 @@ def try_response(response, error_massage):
         pass
 
 
-def publish_comics(base_params, user_id, post_id, message, vk_group_id):
+def publish_comics(access_token, api_version, user_id, post_id, message, vk_group_id):
     method = "wall.post"
-    params = base_params
-    params["attachments"] = f"photo{user_id}_{post_id}"
-    params["message"] = f"{message}"
-    params["owner_id"] = f"-{vk_group_id}"
+    params = {
+        "access_token": access_token,
+        "v": api_version,
+        "attachments": f"photo{user_id}_{post_id}",
+        "message": f"{message}",
+        "owner_id": f"-{vk_group_id}",
+    }
     response = requests.post(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    return response
+    try_response(response=response, error_massage="publish_comics response raised exception.")
 
 
-def save_comics(base_params, server, photo, hash):
+def save_comics(access_token, api_version, server, photo, wall_hash):
     method = "photos.saveWallPhoto"
-    params = base_params
-    params["server"] = server
-    params["photo"] = photo
-    params["hash"] = hash
+    params = {
+        "access_token": access_token,
+        "v": api_version,
+        "server": server,
+        "photo": photo,
+        "hash": wall_hash,
+    }
     response = requests.post(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    return response
+    try_response(response=response, error_massage="save_comics response raised exception.")
+    return response.json()["response"][0]["owner_id"], response.json()["response"][0]["id"]
 
 
 def upload_image(post_image_url, file_name):
@@ -47,41 +54,33 @@ def upload_image(post_image_url, file_name):
         files = {'photo': fd}
         response = requests.post(url=f"{post_image_url}", files=files)
     response.raise_for_status()
-    return response
+    try_response(response=response, error_massage="upload_image response raised exception.")
+    return response.json()["server"], response.json()["photo"], response.json()["hash"]
 
 
-def get_upload_server_url(base_params):
+def get_upload_server_url(access_token, api_version):
     method = "photos.getWallUploadServer"
-    params = base_params
+    params = {
+        "access_token": access_token,
+        "v": api_version,
+    }
     response = requests.get(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    return response
+    try_response(response=response, error_massage="get_upload_server_url response raised exception.")
+    return response.json()["response"]["upload_url"]
 
 
 def main():
     vk_group_id = dotenv_values(".env")["VK_GROUP_ID"]
-    vk_app_api_access_token = dotenv_values(".env")["VK_APP_API_ACCESS_TOKEN"]
-    base_params = {
-        "access_token": f"{vk_app_api_access_token}",
-        "v": "5.131",
-    }
-    response = get_upload_server_url(base_params=base_params)
-    try_response(response=response, error_massage="get_vk_wall response raised exception.")
+    access_token = dotenv_values(".env")["VK_APP_API_ACCESS_TOKEN"]
+    api_version = "5.131"
+    post_image_url = get_upload_server_url(access_token=access_token, api_version=api_version)
     comics_url = get_random_comics_resource_url()
     message, file_name = download_image(resource_url=comics_url)
     try:
-        post_image_url=response.json()["response"]["upload_url"]
-        response = upload_image(post_image_url=post_image_url, file_name=file_name)
-        try_response(response=response, error_massage="post_vk_image response raised exception.")
-        response_server = response.json()["server"]
-        response_photo = response.json()["photo"]
-        response_hash = response.json()["hash"]
-        response = save_comics(base_params=base_params, server=response_server, photo=response_photo, hash=response_hash)
-        try_response(response=response, error_massage="save_vk_wall response raised exception.")
-        user_id = response.json()["response"][0]["owner_id"]
-        post_id = response.json()["response"][0]["id"]
-        response = publish_comics(base_params=base_params, user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
-        try_response(response=response, error_massage="post_vk_wall response raised exception.")
+        server, photo, wall_hash = upload_image(post_image_url=post_image_url, file_name=file_name)
+        user_id, post_id = save_comics(access_token=access_token, api_version=api_version, server=server, photo=photo, wall_hash=wall_hash)
+        publish_comics(access_token=access_token, api_version=api_version, user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
     finally:
         os.remove(file_name)
 
