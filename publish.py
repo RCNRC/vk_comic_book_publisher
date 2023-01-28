@@ -7,13 +7,17 @@ import os
 BASE_URL = "https://api.vk.com/method/"
 
 
+class HTTPError(Exception):
+    def __init__(self, text=None):
+        self.text = text
+
+
 def try_response(response, error_massage):
     try:
         if "error" in response.json():
-            raise requests.exceptions.HTTPError
-    except requests.exceptions.HTTPError:
-        print(error_massage)
-        raise requests.exceptions.HTTPError
+            raise HTTPError(error_massage)
+    finally:
+        pass
 
 
 def post_vk_wall(base_params, user_id, post_id, message, vk_group_id):
