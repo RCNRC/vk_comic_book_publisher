@@ -31,7 +31,7 @@ def post_vk_wall(base_params, user_id, post_id, message, vk_group_id):
     return response
 
 
-def safe_vk_wall(base_params, server, photo, hash):
+def save_vk_wall(base_params, server, photo, hash):
     method = "photos.saveWallPhoto"
     params = base_params
     params["server"] = server
@@ -76,8 +76,8 @@ def main():
         response_server = response.json()["server"]
         response_photo = response.json()["photo"]
         response_hash = response.json()["hash"]
-        response = safe_vk_wall(base_params=base_params, server=response_server, photo=response_photo, hash=response_hash)
-        try_response(response=response, error_massage="safe_vk_wall response raised exception.")
+        response = save_vk_wall(base_params=base_params, server=response_server, photo=response_photo, hash=response_hash)
+        try_response(response=response, error_massage="save_vk_wall response raised exception.")
         user_id = response.json()["response"][0]["owner_id"]
         post_id = response.json()["response"][0]["id"]
         response = post_vk_wall(base_params=base_params, user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
