@@ -1,8 +1,9 @@
 from comics_download import get_random_comics_resource_url, download_image
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 import requests
 import os
 
+load_dotenv()
 
 BASE_URL = "https://api.vk.com/method/"
 
@@ -71,8 +72,8 @@ def get_upload_server_url(access_token, api_version):
 
 
 def main():
-    vk_group_id = dotenv_values(".env")["VK_GROUP_ID"]
-    access_token = dotenv_values(".env")["VK_APP_API_ACCESS_TOKEN"]
+    vk_group_id = os.environ["VK_GROUP_ID"]
+    access_token = os.environ["VK_APP_API_ACCESS_TOKEN"]
     api_version = "5.131"
     post_image_url = get_upload_server_url(access_token=access_token, api_version=api_version)
     comics_url = get_random_comics_resource_url()
