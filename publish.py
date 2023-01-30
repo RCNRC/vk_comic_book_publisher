@@ -13,11 +13,8 @@ class VKResponseError(Exception):
 
 
 def check_response(response, error_massage):
-    try:
-        if "error" in response.json():
-            raise VKResponseError(error_massage)
-    finally:
-        pass
+    if "error" in response.json():
+        raise VKResponseError(error_massage)
 
 
 def publish_comics(access_token, api_version, user_id, post_id, message, vk_group_id):
