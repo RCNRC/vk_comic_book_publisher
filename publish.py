@@ -87,30 +87,30 @@ def main():
     access_token = os.environ["VK_APP_API_ACCESS_TOKEN"]
     api_version = "5.131"
     post_image_url = get_upload_server_url(
-        access_token=access_token,
-        api_version=api_version,
+        access_token,
+        api_version,
     )
     comics_url = get_random_comics_resource_url()
     message, file_name = download_image(resource_url=comics_url)
     try:
         server, photo, wall_hash = upload_image(
-            post_image_url=post_image_url,
-            file_name=file_name,
+            post_image_url,
+            file_name,
         )
         user_id, post_id = save_comic(
-            access_token=access_token,
-            api_version=api_version,
-            server=server,
-            photo=photo,
-            wall_hash=wall_hash,
+            access_token,
+            api_version,
+            server,
+            photo,
+            wall_hash,
         )
         publish_comic(
-            access_token=access_token,
-            api_version=api_version,
-            user_id=user_id,
-            post_id=post_id,
-            message=message,
-            vk_group_id=vk_group_id,
+            access_token,
+            api_version,
+            user_id,
+            post_id,
+            message,
+            vk_group_id,
         )
     finally:
         os.remove(file_name)
