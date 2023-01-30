@@ -28,7 +28,10 @@ def publish_comic(access_token, api_version, user_id, post_id, message, vk_group
     }
     response = requests.post(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    check_response(response=response, error_massage="publish_comics response raised exception.")
+    check_response(
+        response=response,
+        error_massage="publish_comics response raised exception.",
+    )
 
 
 def save_comic(access_token, api_version, server, photo, wall_hash):
@@ -42,7 +45,10 @@ def save_comic(access_token, api_version, server, photo, wall_hash):
     }
     response = requests.post(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    check_response(response=response, error_massage="save_comics response raised exception.")
+    check_response(
+        response=response,
+        error_massage="save_comics response raised exception.",
+    )
     response_dict = response.json()
     return response_dict["response"][0]["owner_id"], response_dict["response"][0]["id"]
 
@@ -52,7 +58,10 @@ def upload_image(post_image_url, file_name):
         files = {'photo': fd}
         response = requests.post(url=f"{post_image_url}", files=files)
     response.raise_for_status()
-    check_response(response=response, error_massage="upload_image response raised exception.")
+    check_response(
+        response=response,
+        error_massage="upload_image response raised exception.",
+    )
     response_dict = response.json()
     return response_dict["server"], response_dict["photo"], response_dict["hash"]
 
@@ -65,7 +74,10 @@ def get_upload_server_url(access_token, api_version):
     }
     response = requests.get(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    check_response(response=response, error_massage="get_upload_server_url response raised exception.")
+    check_response(
+        response=response,
+        error_massage="get_upload_server_url response raised exception.",
+    )
     return response.json()["response"]["upload_url"]
 
 
@@ -74,13 +86,32 @@ def main():
     vk_group_id = os.environ["VK_GROUP_ID"]
     access_token = os.environ["VK_APP_API_ACCESS_TOKEN"]
     api_version = "5.131"
-    post_image_url = get_upload_server_url(access_token=access_token, api_version=api_version)
+    post_image_url = get_upload_server_url(
+        access_token=access_token,
+        api_version=api_version,
+    )
     comics_url = get_random_comics_resource_url()
     message, file_name = download_image(resource_url=comics_url)
     try:
-        server, photo, wall_hash = upload_image(post_image_url=post_image_url, file_name=file_name)
-        user_id, post_id = save_comic(access_token=access_token, api_version=api_version, server=server, photo=photo, wall_hash=wall_hash)
-        publish_comic(access_token=access_token, api_version=api_version, user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
+        server, photo, wall_hash = upload_image(
+            post_image_url=post_image_url,
+            file_name=file_name,
+        )
+        user_id, post_id = save_comic(
+            access_token=access_token,
+            api_version=api_version,
+            server=server,
+            photo=photo,
+            wall_hash=wall_hash,
+        )
+        publish_comic(
+            access_token=access_token,
+            api_version=api_version,
+            user_id=user_id,
+            post_id=post_id,
+            message=message,
+            vk_group_id=vk_group_id,
+        )
     finally:
         os.remove(file_name)
 
