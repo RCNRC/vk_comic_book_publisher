@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 import requests
 import os
 
-load_dotenv()
 
 BASE_URL = "https://api.vk.com/method/"
 
@@ -72,6 +71,7 @@ def get_upload_server_url(access_token, api_version):
 
 
 def main():
+    load_dotenv()
     vk_group_id = os.environ["VK_GROUP_ID"]
     access_token = os.environ["VK_APP_API_ACCESS_TOKEN"]
     api_version = "5.131"
