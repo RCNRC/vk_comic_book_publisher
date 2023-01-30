@@ -12,7 +12,7 @@ class HTTPError(Exception):
         self.text = text
 
 
-def try_response(response, error_massage):
+def check_response(response, error_massage):
     try:
         if "error" in response.json():
             raise HTTPError(error_massage)
@@ -31,7 +31,7 @@ def publish_comics(access_token, api_version, user_id, post_id, message, vk_grou
     }
     response = requests.post(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    try_response(response=response, error_massage="publish_comics response raised exception.")
+    check_response(response=response, error_massage="publish_comics response raised exception.")
 
 
 def save_comics(access_token, api_version, server, photo, wall_hash):
@@ -45,7 +45,7 @@ def save_comics(access_token, api_version, server, photo, wall_hash):
     }
     response = requests.post(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    try_response(response=response, error_massage="save_comics response raised exception.")
+    check_response(response=response, error_massage="save_comics response raised exception.")
     return response.json()["response"][0]["owner_id"], response.json()["response"][0]["id"]
 
 
@@ -54,7 +54,7 @@ def upload_image(post_image_url, file_name):
         files = {'photo': fd}
         response = requests.post(url=f"{post_image_url}", files=files)
     response.raise_for_status()
-    try_response(response=response, error_massage="upload_image response raised exception.")
+    check_response(response=response, error_massage="upload_image response raised exception.")
     return response.json()["server"], response.json()["photo"], response.json()["hash"]
 
 
@@ -66,7 +66,7 @@ def get_upload_server_url(access_token, api_version):
     }
     response = requests.get(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
-    try_response(response=response, error_massage="get_upload_server_url response raised exception.")
+    check_response(response=response, error_massage="get_upload_server_url response raised exception.")
     return response.json()["response"]["upload_url"]
 
 
