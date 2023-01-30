@@ -43,7 +43,8 @@ def save_comic(access_token, api_version, server, photo, wall_hash):
     response = requests.post(url=f"{BASE_URL}{method}", params=params)
     response.raise_for_status()
     check_response(response=response, error_massage="save_comics response raised exception.")
-    return response.json()["response"][0]["owner_id"], response.json()["response"][0]["id"]
+    response_dict = response.json()
+    return response_dict["response"][0]["owner_id"], response_dict["response"][0]["id"]
 
 
 def upload_image(post_image_url, file_name):
@@ -52,7 +53,8 @@ def upload_image(post_image_url, file_name):
         response = requests.post(url=f"{post_image_url}", files=files)
     response.raise_for_status()
     check_response(response=response, error_massage="upload_image response raised exception.")
-    return response.json()["server"], response.json()["photo"], response.json()["hash"]
+    response_dict = response.json()
+    return response_dict["server"], response_dict["photo"], response_dict["hash"]
 
 
 def get_upload_server_url(access_token, api_version):
