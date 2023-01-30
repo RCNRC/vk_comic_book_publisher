@@ -7,7 +7,7 @@ import os
 BASE_URL = "https://api.vk.com/method/"
 
 
-class HTTPError(Exception):
+class VKResponseError(Exception):
     def __init__(self, text=None):
         self.text = text
 
@@ -15,7 +15,7 @@ class HTTPError(Exception):
 def check_response(response, error_massage):
     try:
         if "error" in response.json():
-            raise HTTPError(error_massage)
+            raise VKResponseError(error_massage)
     finally:
         pass
 
