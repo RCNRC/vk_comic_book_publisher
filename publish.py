@@ -17,7 +17,7 @@ def check_response(response, error_massage):
         raise VKResponseError(error_massage)
 
 
-def publish_comics(access_token, api_version, user_id, post_id, message, vk_group_id):
+def publish_comic(access_token, api_version, user_id, post_id, message, vk_group_id):
     method = "wall.post"
     params = {
         "access_token": access_token,
@@ -31,7 +31,7 @@ def publish_comics(access_token, api_version, user_id, post_id, message, vk_grou
     check_response(response=response, error_massage="publish_comics response raised exception.")
 
 
-def save_comics(access_token, api_version, server, photo, wall_hash):
+def save_comic(access_token, api_version, server, photo, wall_hash):
     method = "photos.saveWallPhoto"
     params = {
         "access_token": access_token,
@@ -77,8 +77,8 @@ def main():
     message, file_name = download_image(resource_url=comics_url)
     try:
         server, photo, wall_hash = upload_image(post_image_url=post_image_url, file_name=file_name)
-        user_id, post_id = save_comics(access_token=access_token, api_version=api_version, server=server, photo=photo, wall_hash=wall_hash)
-        publish_comics(access_token=access_token, api_version=api_version, user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
+        user_id, post_id = save_comic(access_token=access_token, api_version=api_version, server=server, photo=photo, wall_hash=wall_hash)
+        publish_comic(access_token=access_token, api_version=api_version, user_id=user_id, post_id=post_id, message=message, vk_group_id=vk_group_id)
     finally:
         os.remove(file_name)
 
