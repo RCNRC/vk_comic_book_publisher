@@ -49,8 +49,8 @@ def save_comic(access_token, api_version, server, photo, wall_hash):
         response,
         error_massage="save_comics response raised exception.",
     )
-    response_dict = response.json()
-    return response_dict["response"][0]["owner_id"], response_dict["response"][0]["id"]
+    response_content = response.json()
+    return response_content["response"][0]["owner_id"], response_content["response"][0]["id"]
 
 
 def upload_image(post_image_url, file_name):
@@ -62,8 +62,8 @@ def upload_image(post_image_url, file_name):
         response,
         error_massage="upload_image response raised exception.",
     )
-    response_dict = response.json()
-    return response_dict["server"], response_dict["photo"], response_dict["hash"]
+    response_content = response.json()
+    return response_content["server"], response_content["photo"], response_content["hash"]
 
 
 def get_upload_server_url(access_token, api_version):
